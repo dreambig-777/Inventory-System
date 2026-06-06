@@ -142,6 +142,9 @@ const STAFF_ROLES_BY_SHOP_TYPE = {
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
+  // Auto-prune transactions older than 90 days silently on startup
+  const pruned = pruneOldTransactions(90);
+  if (pruned && pruned.length > 0) saveState();
   state.cart = []; // Clear cart on each fresh page load
   // Clear staff session on page load — user must re-login
   state.currentStaff = null;
@@ -1603,6 +1606,46 @@ function saveDailyTransactions() {
 
   state.dailyHistory.push(dailySummary);
   console.log("[v0] Saved daily transactions:", dailySummary);
+}
+
+// Auto-prune: keep only last N days in localStorage, return the rest for archiving
+function pruneOldTransactions(daysToKeep = 90) {
+  if (!Array.isArray(state.transactions) || state.transactions.length === 0) return null;
+
+  const cutoff = Date.now() - daysToKeep * 86400000;
+  const kept = [];
+  const archived = [];
+
+  for (const t of state.transactions) {
+    const tTime = new Date(t.date).getTime();
+    if (tTime >= cutoff) kept.push(t);
+    else archived.push(t);
+  }
+
+  if (archived.length === 0) return null;
+
+  state.transactions = kept;
+  return archived;
+}
+
+function downloadJSON(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function archiveOldTransactions() {
+  const archived = pruneOldTransactions(90);
+  if (!archived) { alert("No transactions older than 90 days to archive."); return; }
+
+  saveState();
+  const filename = `transactions-archive-${new Date().toISOString().slice(0, 10)}.json`;
+  downloadJSON(archived, filename);
+  alert(`Archived ${archived.length} old transaction(s) to ${filename}\nThey have been removed from local storage.`);
 }
 
 // Passcode Management

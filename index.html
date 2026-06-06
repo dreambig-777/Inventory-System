@@ -502,282 +502,174 @@
           </div>
 
           <div class="section" id="settings">
-            <h2 class="section-title">Shop Settings</h2>
 
-            <div
-              style="
-                background: var(--bg-primary);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 24px;
-              "
-            >
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-bottom: 16px;
-                "
-              >
-                <div>
-                  <h3 class="settings-subtitle" style="margin: 0 0 8px 0">
-                    Cloud Storage Status
-                  </h3>
-                  <div
-                    id="syncStatus"
-                    style="color: var(--text-secondary); font-size: 13px"
-                  >
-                    Initializing...
+            <div class="settings-page">
+
+              <!-- Cloud Sync Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">☁️</span>
+                    <span>Cloud Storage</span>
+                  </div>
+                  <div class="settings-card-actions">
+                    <button class="btn btn-sm btn-outline" onclick="openCloudConfigModal()">⚙️ Configure</button>
+                    <button class="btn btn-sm btn-primary" onclick="manualSync()">🔄 Sync Now</button>
                   </div>
                 </div>
-                <div style="display: flex; gap: 8px">
-                  <button
-                    class="btn btn-outline"
-                    onclick="openCloudConfigModal()"
-                  >
-                    ⚙️ Configure
-                  </button>
-                  <button class="btn btn-primary" onclick="manualSync()">
-                    🔄 Sync Now
-                  </button>
-                </div>
-              </div>
-              <div
-                style="
-                  background: var(--bg-secondary);
-                  padding: 12px;
-                  border-radius: 8px;
-                  font-size: 12px;
-                  color: var(--text-secondary);
-                "
-              >
-                <strong>Hybrid Storage:</strong> Your data is automatically
-                saved locally and synced to the cloud when online. You can work
-                offline and changes will sync when you're back online.
-              </div>
-            </div>
-
-            <div class="settings-form">
-              <h3 class="settings-subtitle">Shop Type & Information</h3>
-              <div class="form-group">
-                <label>Shop Type:</label>
-                <select id="shopType" onchange="updateShopCategories()">
-                  <option value="">Select shop type</option>
-                  <option value="provision">Provision/Grocery Shop</option>
-                  <option value="pharmacy">Pharmacy</option>
-                  <option value="electronics">Electronics Shop</option>
-                  <option value="clothing">Clothing & Fashion</option>
-                  <option value="hardware">Hardware Store</option>
-                  <option value="bakery">Bakery</option>
-                  <option value="beauty">Beauty & Cosmetics</option>
-                  <option value="general">General Store</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Shop Name:</label>
-                <input
-                  type="text"
-                  id="shopName"
-                  placeholder="Enter shop name"
-                />
-              </div>
-              <div class="form-group">
-                <label>Location:</label>
-                <input
-                  type="text"
-                  id="shopLocation"
-                  placeholder="Enter shop location"
-                />
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Phone Number:</label>
-                  <input type="tel" id="shopPhone" placeholder="024XXXXXXX" />
-                </div>
-                <div class="form-group">
-                  <label>Email (Optional):</label>
-                  <input
-                    type="email"
-                    id="shopEmail"
-                    placeholder="Enter email"
-                  />
+                <div class="settings-card-body">
+                  <div id="syncStatus" class="sync-status">Initializing...</div>
+                  <div class="settings-hint">Your data is automatically saved locally and synced to the cloud when online.</div>
                 </div>
               </div>
 
-              <h3 class="settings-subtitle">Business Settings</h3>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Low Stock Alert Level:</label>
-                  <input
-                    type="number"
-                    id="lowStockThreshold"
-                    value="10"
-                    min="1"
-                  />
+              <!-- Shop Information Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">🏪</span>
+                    <span>Shop Information</span>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label>Max Stock Alert Level:</label>
-                  <input
-                    type="number"
-                    id="maxStockThreshold"
-                    value="50"
-                    min="1"
-                  />
-                </div>
-              </div>
-
-              <div
-                style="
-                  margin-top: 30px;
-                  padding: 20px;
-                  background: var(--bg-secondary);
-                  border-radius: 12px;
-                  border: 1px solid var(--border);
-                "
-              >
-                <h3 style="margin-bottom: 12px">🏷️ Discount Settings</h3>
-                <p
-                  style="
-                    color: var(--text-secondary);
-                    margin-bottom: 12px;
-                    font-size: 14px;
-                  "
-                >
-                  Set a global discount that applies to all POS sales. Only
-                  configurable here in Settings.
-                </p>
-                <div style="margin-bottom: 12px">
-                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer">
-                    <input type="checkbox" id="discountEnabled" style="width: 18px; height: 18px" />
-                    <span>Enable Discount</span>
-                  </label>
-                </div>
-                <div class="form-row">
+                <div class="settings-card-body">
                   <div class="form-group">
-                    <label>Discount Type</label>
-                    <select id="discountType" onchange="updateDiscountValueLabel()">
-                      <option value="percentage">Percentage (%)</option>
-                      <option value="fixed">Fixed Amount (GHS)</option>
+                    <label>Shop Type</label>
+                    <select id="shopType" onchange="updateShopCategories()">
+                      <option value="">Select shop type</option>
+                      <option value="provision">Provision / Grocery</option>
+                      <option value="pharmacy">Pharmacy</option>
+                      <option value="electronics">Electronics</option>
+                      <option value="clothing">Clothing & Fashion</option>
+                      <option value="hardware">Hardware Store</option>
+                      <option value="bakery">Bakery</option>
+                      <option value="beauty">Beauty & Cosmetics</option>
+                      <option value="general">General Store</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <label id="discountValueLabel">Discount Value</label>
-                    <input
-                      type="number"
-                      id="discountValue"
-                      step="0.01"
-                      min="0"
-                      placeholder="0"
-                    />
+                    <label>Shop Name</label>
+                    <input type="text" id="shopName" placeholder="Enter shop name" />
+                  </div>
+                  <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="shopLocation" placeholder="Enter shop location" />
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Phone Number</label>
+                      <input type="tel" id="shopPhone" placeholder="024XXXXXXX" />
+                    </div>
+                    <div class="form-group">
+                      <label>Email</label>
+                      <input type="email" id="shopEmail" placeholder="Enter email" />
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label>Reason (Optional)</label>
-                  <input
-                    type="text"
-                    id="discountReason"
-                    placeholder="e.g., Store-wide promotion"
-                  />
+              </div>
+
+              <!-- Inventory Rules Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">📦</span>
+                    <span>Inventory Rules</span>
+                  </div>
+                </div>
+                <div class="settings-card-body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Low Stock Alert</label>
+                      <input type="number" id="lowStockThreshold" value="10" min="1" />
+                      <span class="field-hint">When stock goes below this number</span>
+                    </div>
+                    <div class="form-group">
+                      <label>Max Stock Alert</label>
+                      <input type="number" id="maxStockThreshold" value="50" min="1" />
+                      <span class="field-hint">When stock exceeds this number</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div
-                style="
-                  margin-top: 20px;
-                  padding: 20px;
-                  background: var(--bg-secondary);
-                  border-radius: 12px;
-                  border: 1px solid var(--border);
-                "
-              >
-                <h3 style="margin-bottom: 12px">🔐 Security Settings</h3>
-                <p
-                  style="
-                    color: var(--text-secondary);
-                    margin-bottom: 12px;
-                    font-size: 14px;
-                  "
-                >
-                  Manage passcode protection for sensitive sections (Dashboard,
-                  Inventory, Staff, etc.)
-                </p>
-                <button
-                  class="btn btn-outline"
-                  onclick="openChangePasscodeModal()"
-                >
-                  Change Passcode
-                </button>
-              </div>
-
-              <!-- Add data backup section -->
-              <div
-                style="
-                  padding: 20px;
-                  background: var(--bg-secondary);
-                  border-radius: 12px;
-                  margin-top: 20px;
-                "
-              >
-                <h3 style="margin-bottom: 12px">📊 Data Backup & Restore</h3>
-                <p
-                  style="
-                    color: var(--text-secondary);
-                    margin-bottom: 12px;
-                    font-size: 14px;
-                  "
-                >
-                  Export all your data as a backup or restore from a previous
-                  backup file.
-                </p>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap">
-                  <button class="btn btn-primary" onclick="exportDataToJSON()">
-                    📥 Export Backup
-                  </button>
-                  <button
-                    class="btn btn-outline"
-                    onclick="document.getElementById('importFileInput').click()"
-                  >
-                    📤 Import Backup
-                  </button>
-                  <input
-                    type="file"
-                    id="importFileInput"
-                    accept=".json"
-                    style="display: none"
-                    onchange="importDataFromJSON(event)"
-                  />
+              <!-- Discount Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">🏷️</span>
+                    <span>Discount Settings</span>
+                  </div>
                 </div>
-                <small
-                  style="
-                    color: var(--text-secondary);
-                    display: block;
-                    margin-top: 12px;
-                  "
-                >
-                  ℹ️ Backups include: Shop settings, Staff, Inventory, Sales
-                  history, Transactions, and Passcode
-                </small>
+                <div class="settings-card-body">
+                  <p class="settings-description">Global discount applied to all POS sales.</p>
+                  <label class="toggle-label">
+                    <input type="checkbox" id="discountEnabled" />
+                    <span>Enable Discount</span>
+                  </label>
+                  <div class="form-row" style="margin-top:12px">
+                    <div class="form-group">
+                      <label>Type</label>
+                      <select id="discountType" onchange="updateDiscountValueLabel()">
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed (GHS)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label id="discountValueLabel">Value</label>
+                      <input type="number" id="discountValue" step="0.01" min="0" placeholder="0" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Reason</label>
+                    <input type="text" id="discountReason" placeholder="e.g. Store-wide promotion" />
+                  </div>
+                </div>
               </div>
 
-              <button
-                class="btn btn-primary"
-                onclick="saveSettings()"
-                style="margin-top: 16px"
-              >
-                Save Settings
-              </button>
+              <!-- Security Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">🔐</span>
+                    <span>Security</span>
+                  </div>
+                </div>
+                <div class="settings-card-body">
+                  <p class="settings-description">Manager passcode for accessing Dashboard, Inventory, Staff, and other protected sections.</p>
+                  <button class="btn btn-outline" onclick="openChangePasscodeModal()">Change Passcode</button>
+                </div>
+              </div>
 
-              <hr style="margin: 24px 0; border-color: var(--border)" />
+              <!-- Data Management Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">📂</span>
+                    <span>Data Management</span>
+                  </div>
+                </div>
+                <div class="settings-card-body">
+                  <p class="settings-description">Backup, restore, or archive old data to keep storage lean.</p>
+                  <div class="button-group">
+                    <button class="btn btn-primary" onclick="exportDataToJSON()">📥 Export Backup</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('importFileInput').click()">📤 Import Backup</button>
+                    <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importDataFromJSON(event)" />
+                  </div>
+                  <div class="button-group" style="margin-top:8px">
+                    <button class="btn btn-outline" onclick="archiveOldTransactions()">🗂️ Archive Old Transactions</button>
+                  </div>
+                  <div class="settings-hint" style="margin-top:12px">
+                    💾 Backups include shop settings, staff, inventory, sales history, transactions, and passcode.
+                    <br>🗂️ Archive moves transactions older than 90 days to a downloadable file to free up space.
+                  </div>
+                </div>
+              </div>
 
-              <button
-                class="btn btn-danger"
-                onclick="resetToDefault()"
-                style="width: 100%"
-              >
-                ⚠️ Reset System to Default
-              </button>
+              <!-- Actions -->
+              <div class="settings-actions">
+                <button class="btn btn-primary btn-lg" onclick="saveSettings()">💾 Save Settings</button>
+                <button class="btn btn-danger btn-lg" onclick="resetToDefault()">⚠️ Reset to Default</button>
+              </div>
+
             </div>
           </div>
 
