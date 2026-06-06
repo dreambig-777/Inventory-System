@@ -1948,9 +1948,11 @@ function resetToDefault() {
 }
 
 function exportDataToJSON() {
+  // Strip staff passcodes before exporting
+  const exportState = { ...state, staff: state.staff.map(s => ({ ...s, passcode: undefined })) };
   const link = document.createElement("a");
   link.href = URL.createObjectURL(
-    new Blob([JSON.stringify({ version: "1.0", ...state }, null, 2)], {
+    new Blob([JSON.stringify({ version: "1.0", ...exportState }, null, 2)], {
       type: "application/json",
     })
   );
@@ -1959,7 +1961,7 @@ function exportDataToJSON() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(link.href);
-  alert("✓ Data exported successfully!");
+  alert("✓ Data exported successfully! (Staff passcodes excluded for security)");
 }
 
 function importDataFromJSON(event) {
@@ -1989,7 +1991,8 @@ function importDataFromJSON(event) {
       if (confirmImport) {
         const importedShop = importedData.shop || {};
         state.shop = { ...state.shop, ...importedShop };
-        state.staff = importedData.staff || [];
+        // Restore staff with fallback passcode if missing (export strips them for security)
+        state.staff = (importedData.staff || []).map(s => ({ ...s, passcode: s.passcode || "1234" }));
         state.products = importedData.products || [];
         state.stockHistory = importedData.stockHistory || [];
         state.passcode = importedData.passcode || "1234";
