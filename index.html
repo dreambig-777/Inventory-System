@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Dream Big Shop Manager - Professional inventory and POS system for retail shops"
+    />
+    <meta name="theme-color" content="#1e40af" />
+
+    <title>Dream Big Shop Manager - Inventory & POS System</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231e40af' width='192' height='192'/><text x='96' y='120' font-size='80' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>💼</text></svg>"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231e40af' width='192' height='192' rx='45'/><text x='96' y='120' font-size='80' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>💼</text></svg>"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">💼</div>
+          <div>
+            <div class="shop-title" id="sidebarShopName">Dream Big</div>
+            <div class="shop-subtitle" id="sidebarShopSubtitle">Shop Manager</div>
+          </div>
+        </div>
+        <div class="sidebar-nav">
+          <div class="nav-item" onclick="showSection('dashboard')">
+            📊 Dashboard
+          </div>
+          <div class="nav-item active" onclick="showSection('pos')">
+            🛒 Point of Sale
+          </div>
+          <div class="nav-item" onclick="showSection('inventory')">
+            📦 Stock
+          </div>
+
+          <div class="nav-item" onclick="showSection('transactions')">
+            💰 Transactions
+          </div>
+          <div class="nav-item" onclick="showSection('staff')">👥 Staff</div>
+          <div class="nav-item" onclick="showSection('settings')">
+            ⚙️ Settings
+          </div>
+          <!-- Add Sales History section in navigation -->
+          <div class="nav-item" onclick="showSection('saleshistory')">
+            📈 Sales History
+          </div>
+          <div class="nav-item" onclick="showSection('monthlyreport')">
+            📊 Monthly Report
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="header">
+          <h1 class="header-title" id="pageTitle">Point of Sale</h1>
+          <div id="shopNameDisplay" style="font-size:11px;color:var(--text-secondary);margin-top:-2px"></div>
+          <div class="user-info">
+            <div>
+              <div class="staff-name" id="staffName">Select Staff</div>
+            </div>
+            <button class="user-btn" id="userBtn" onclick="openStaffLogin()" title="Login">👤</button>
+            <button class="user-btn" id="logoutBtn" onclick="logoutStaff()" title="Logout" style="display:none">🚪</button>
+          </div>
+        </div>
+
+        <div class="content-area">
+          <div class="section" id="dashboard">
+            <div class="dashboard-grid">
+              <div class="stat-card">
+                <div class="stat-label">Today's Sales</div>
+                <div class="stat-value" id="todaySales">₵ 0.00</div>
+                <div class="stat-change">Updates automatically</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Transactions</div>
+                <div class="stat-value" id="transCount">0</div>
+                <div class="stat-change">Today</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Low Stock Items</div>
+                <div class="stat-value" id="lowStockCount">0</div>
+                <div class="stat-change">Action needed</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value" id="productCount">0</div>
+                <div class="stat-change">In inventory</div>
+              </div>
+            </div>
+
+            <h2 class="section-title">Recent Transactions</h2>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Attendant</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Items</th>
+                  </tr>
+                </thead>
+                <tbody id="recentTransactions">
+                  <tr>
+                    <td colspan="5" class="empty-state">No transactions yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section active" id="pos">
+            <div class="pos-container">
+              <div>
+                <div class="search-box">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    id="searchInput"
+                    onkeyup="filterProducts()"
+                  />
+                </div>
+                <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
+                  <label style="font-weight: 500; font-size: 14px;">Filter by Category:</label>
+                  <select
+                    id="posCategoryFilter"
+                    onchange="filterPOSByCategory()"
+                    style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: white; flex: 1; max-width: 250px;"
+                  >
+                    <option value="all">All Categories</option>
+                  </select>
+                  <button
+                    class="btn btn-outline"
+                    onclick="document.getElementById('posCategoryFilter').value = 'all'; filterPOSByCategory();"
+                    style="padding: 8px 12px; font-size: 13px;"
+                  >
+                    Clear Filter
+                  </button>
+                </div>
+                <div class="products-grid" id="productsGrid"></div>
+              </div>
+
+              <div class="cart-panel">
+                <div class="cart-header" style="display:flex;justify-content:space-between;align-items:center">
+                  <span>Shopping Cart</span>
+                  <button class="btn btn-sm btn-outline" onclick="openHeldCartsModal()" style="padding:4px 10px;font-size:12px;position:relative">
+                    📋 Held (<span id="heldCartsBadge" style="font-weight:700">0</span>)
+                  </button>
+                </div>
+                <div class="cart-items" id="cartItems">
+                  <div class="empty-state">Cart is empty</div>
+                </div>
+                <div class="cart-footer">
+                  <div class="cart-summary">
+                    <div class="summary-row">
+                      <span>Subtotal:</span>
+                      <span id="subtotal">GHS 0.00</span>
+                    </div>
+                    <div class="summary-row">
+                      <span>Discount:</span>
+                      <span id="discountAmount">GHS 0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                      <span>Total:</span>
+                      <span id="cartTotal">GHS 0.00</span>
+                    </div>
+                  </div>
+
+                  <div class="payment-method">
+                    <label>Payment Method:</label>
+                    <select
+                      id="paymentMethodSelect"
+                      onchange="updatePaymentMethod()"
+                    >
+                      <option value="cash">💵 Cash (GHS)</option>
+                      <option value="mobile_money">📱 Mobile Money</option>
+                      <option value="bank">🏦 Bank Transfer</option>
+                    </select>
+                  </div>
+
+                  <div
+                    class="form-group"
+                    id="mobileMoneyProviderGroup"
+                    style="display: none; margin-bottom: 12px"
+                  >
+                    <label>Select Mobile Money Provider:</label>
+                    <select
+                      id="mobileMoneyProvider"
+                      onchange="updatePaymentMethod()"
+                    >
+                      <option value="">Choose provider</option>
+                      <option value="mtn">📱 MTN Mobile Money</option>
+                      <option value="vodafone">📱 Vodafone Cash</option>
+                      <option value="airteltigo">📱 AirtelTigo Money</option>
+                    </select>
+                  </div>
+
+                  <div
+                    class="form-group"
+                    id="bankTransferGroup"
+                    style="display: none; margin-bottom: 12px"
+                  >
+                    <label>Select Bank:</label>
+                    <select id="bankSelect" onchange="updatePaymentMethod()">
+                      <option value="">Choose bank</option>
+                      <option value="gha_bank">Ghana Commercial Bank</option>
+                      <option value="eco_bank">EcoBank Ghana</option>
+                      <option value="ded_bank">Dedicated Bank</option>
+                      <option value="std_bank">Standard Chartered Bank</option>
+                      <option value="gtb">Guaranty Trust Bank</option>
+                      <option value="fbn_bank">First Bank of Nigeria</option>
+                      <option value="zenith_bank">Zenith Bank Ghana</option>
+                      <option value="access_bank">Access Bank Ghana</option>
+                      <option value="unibank">UBA Ghana</option>
+                      <option value="calbank">CAL Bank</option>
+                    </select>
+                  </div>
+
+                  <div
+                    class="form-group"
+                    id="customerPaymentGroup"
+                    style="margin-bottom: 12px"
+                  >
+                    <label>Amount Given by Customer (GHS):</label>
+                    <input
+                      type="number"
+                      id="customerPaymentAmount"
+                      placeholder="0.00"
+                      min="0"
+                      step="0.01"
+                      onkeyup="calculateChange()"
+                      oninput="calculateChange()"
+                    />
+                  </div>
+
+                  <div
+                    class="change-display"
+                    id="changeDisplay"
+                    style="
+                      display: none;
+                      margin-bottom: 12px;
+                      padding: 12px;
+                      background: rgba(16, 185, 129, 0.1);
+                      border-radius: 6px;
+                      border-left: 4px solid var(--success);
+                    "
+                  >
+                    <div style="font-size: 12px; color: var(--text-secondary)">
+                      Balance to Give:
+                    </div>
+                    <div
+                      id="changeAmount"
+                      style="
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: var(--success);
+                      "
+                    >
+                      GHS 0.00
+                    </div>
+                  </div>
+
+                  <div id="saleStatus" style="font-size:11px;color:var(--text-secondary);text-align:center;margin-bottom:6px"></div>
+                  <button
+                    class="btn btn-primary"
+                    onclick="completeSale()"
+                    style="width: 100%; margin-bottom: 8px"
+                  >
+                    Complete Sale
+                  </button>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <button
+                      class="btn btn-outline"
+                      onclick="holdCart()"
+                      style="width:100%"
+                    >
+                      ⏸ Hold Cart
+                    </button>
+                    <button
+                      class="btn btn-outline"
+                      onclick="clearCart()"
+                      style="width:100%"
+                    >
+                      Clear Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" id="inventory">
+            <div class="section-header">
+              <h2 class="section-title">Stock Management</h2>
+              <div style="display: flex; gap: 8px">
+                <button
+                  class="btn btn-outline"
+                  id="multiDeleteBtn"
+                  onclick="deleteSelectedItems()"
+                  style="display: none"
+                >
+                  Delete Selected
+                </button>
+                <button class="btn btn-primary" onclick="openAddProductModal()">
+                  + Add Product
+                </button>
+              </div>
+            </div>
+
+            <div class="search-box">
+              <input
+                type="text"
+                placeholder="Search inventory..."
+                id="inventorySearch"
+                onkeyup="filterInventory()"
+              />
+            </div>
+
+            <!-- Add Low Stock Filter to Inventory -->
+            <div
+              style="
+                margin-bottom: 16px;
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+              "
+            >
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  cursor: pointer;
+                  margin: 0;
+                "
+              >
+                <input
+                  type="checkbox"
+                  id="lowStockFilter"
+                  onchange="filterLowStock()"
+                  style="width: 18px; height: 18px; cursor: pointer"
+                />
+                <span style="font-weight: 500"
+                  >⚠️ Show Low Stock Items Only</span
+                >
+              </label>
+              <button
+                class="btn btn-outline"
+                onclick="document.getElementById('lowStockFilter').checked = false; filterLowStock();"
+                style="padding: 6px 12px; font-size: 12px"
+              >
+                Clear Filter
+              </button>
+              <!-- Updated export buttons to use new formatted table functions -->
+              <button
+                class="btn btn-primary"
+                onclick="exportStockAsFormattedTable()"
+                style="
+                  padding: 6px 12px;
+                  font-size: 12px;
+                  background-color: var(--success);
+                "
+              >
+                📥 Export All Stock (Table)
+              </button>
+              <button
+                class="btn btn-danger"
+                onclick="exportLowStockAsFormattedTable()"
+                style="padding: 6px 12px; font-size: 12px"
+              >
+                ⚠️ Export Low Stock (Table)
+              </button>
+              <!-- Added sales history export button -->
+              <button
+                class="btn btn-outline"
+                onclick="exportSalesHistory()"
+                style="padding: 6px 12px; font-size: 12px"
+              >
+                📊 Export Sales History
+              </button>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 40px">
+                      <input
+                        type="checkbox"
+                        id="selectAllCheckbox"
+                        onchange="toggleSelectAll()"
+                      />
+                    </th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTable">
+                  <tr>
+                    <td colspan="7" class="empty-state">No products yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section" id="transactions">
+            <h2 class="section-title">Transaction History</h2>
+
+            <div class="transaction-filters">
+              <input type="date" id="transactionDate" class="form-input" onchange="renderTransactions()" />
+              <select id="transactionFilter" class="form-select" onchange="renderTransactions()">
+                <option value="">All Transactions</option>
+                <option value="cash">Cash</option>
+                <option value="mtn">MTN Mobile Money</option>
+                <option value="vodafone">Vodafone Cash</option>
+                <option value="airteltigo">AirtelTigo Money</option>
+              </select>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>Receipt #</th>
+                    <th>Attendant</th>
+                    <th>Payment</th>
+                    <th>Amount</th>
+                    <th>Items</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsTable">
+                  <tr>
+                    <td colspan="7" class="empty-state">No transactions yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
+          </div>
+
+          <div class="section" id="staff">
+            <div class="section-header">
+              <h2 class="section-title">Shop Staff</h2>
+              <div style="display: flex; gap: 8px">
+                <button
+                  class="btn btn-outline"
+                  id="multiDeleteStaffBtn"
+                  onclick="deleteSelectedStaff()"
+                  style="display: none"
+                >
+                  Delete Selected
+                </button>
+                <button class="btn btn-primary" onclick="openAddStaffModal()">
+                  + Add Staff Member
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 40px">
+                      <input
+                        type="checkbox"
+                        id="selectAllStaffCheckbox"
+                        onchange="toggleSelectAllStaff()"
+                      />
+                    </th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="staffTable">
+                  <tr>
+                    <td colspan="6" class="empty-state">No staff added yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section" id="settings">
+            <h2 class="section-title">Shop Settings</h2>
+
+            <div
+              style="
+                background: var(--bg-primary);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 24px;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 16px;
+                "
+              >
+                <div>
+                  <h3 class="settings-subtitle" style="margin: 0 0 8px 0">
+                    Cloud Storage Status
+                  </h3>
+                  <div
+                    id="syncStatus"
+                    style="color: var(--text-secondary); font-size: 13px"
+                  >
+                    Initializing...
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px">
+                  <button
+                    class="btn btn-outline"
+                    onclick="openCloudConfigModal()"
+                  >
+                    ⚙️ Configure
+                  </button>
+                  <button class="btn btn-primary" onclick="manualSync()">
+                    🔄 Sync Now
+                  </button>
+                </div>
+              </div>
+              <div
+                style="
+                  background: var(--bg-secondary);
+                  padding: 12px;
+                  border-radius: 8px;
+                  font-size: 12px;
+                  color: var(--text-secondary);
+                "
+              >
+                <strong>Hybrid Storage:</strong> Your data is automatically
+                saved locally and synced to the cloud when online. You can work
+                offline and changes will sync when you're back online.
+              </div>
+            </div>
+
+            <div class="settings-form">
+              <h3 class="settings-subtitle">Shop Type & Information</h3>
+              <div class="form-group">
+                <label>Shop Type:</label>
+                <select id="shopType" onchange="updateShopCategories()">
+                  <option value="">Select shop type</option>
+                  <option value="provision">Provision/Grocery Shop</option>
+                  <option value="pharmacy">Pharmacy</option>
+                  <option value="electronics">Electronics Shop</option>
+                  <option value="clothing">Clothing & Fashion</option>
+                  <option value="hardware">Hardware Store</option>
+                  <option value="bakery">Bakery</option>
+                  <option value="beauty">Beauty & Cosmetics</option>
+                  <option value="general">General Store</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Shop Name:</label>
+                <input
+                  type="text"
+                  id="shopName"
+                  placeholder="Enter shop name"
+                />
+              </div>
+              <div class="form-group">
+                <label>Location:</label>
+                <input
+                  type="text"
+                  id="shopLocation"
+                  placeholder="Enter shop location"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Phone Number:</label>
+                  <input type="tel" id="shopPhone" placeholder="024XXXXXXX" />
+                </div>
+                <div class="form-group">
+                  <label>Email (Optional):</label>
+                  <input
+                    type="email"
+                    id="shopEmail"
+                    placeholder="Enter email"
+                  />
+                </div>
+              </div>
+
+              <h3 class="settings-subtitle">Business Settings</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Low Stock Alert Level:</label>
+                  <input
+                    type="number"
+                    id="lowStockThreshold"
+                    value="10"
+                    min="1"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Max Stock Alert Level:</label>
+                  <input
+                    type="number"
+                    id="maxStockThreshold"
+                    value="50"
+                    min="1"
+                  />
+                </div>
+              </div>
+
+              <div
+                style="
+                  margin-top: 30px;
+                  padding: 20px;
+                  background: var(--bg-secondary);
+                  border-radius: 12px;
+                  border: 1px solid var(--border);
+                "
+              >
+                <h3 style="margin-bottom: 12px">🏷️ Discount Settings</h3>
+                <p
+                  style="
+                    color: var(--text-secondary);
+                    margin-bottom: 12px;
+                    font-size: 14px;
+                  "
+                >
+                  Set a global discount that applies to all POS sales. Only
+                  configurable here in Settings.
+                </p>
+                <div style="margin-bottom: 12px">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer">
+                    <input type="checkbox" id="discountEnabled" style="width: 18px; height: 18px" />
+                    <span>Enable Discount</span>
+                  </label>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Discount Type</label>
+                    <select id="discountType" onchange="updateDiscountValueLabel()">
+                      <option value="percentage">Percentage (%)</option>
+                      <option value="fixed">Fixed Amount (GHS)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label id="discountValueLabel">Discount Value</label>
+                    <input
+                      type="number"
+                      id="discountValue"
+                      step="0.01"
+                      min="0"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Reason (Optional)</label>
+                  <input
+                    type="text"
+                    id="discountReason"
+                    placeholder="e.g., Store-wide promotion"
+                  />
+                </div>
+              </div>
+
+              <div
+                style="
+                  margin-top: 20px;
+                  padding: 20px;
+                  background: var(--bg-secondary);
+                  border-radius: 12px;
+                  border: 1px solid var(--border);
+                "
+              >
+                <h3 style="margin-bottom: 12px">🔐 Security Settings</h3>
+                <p
+                  style="
+                    color: var(--text-secondary);
+                    margin-bottom: 12px;
+                    font-size: 14px;
+                  "
+                >
+                  Manage passcode protection for sensitive sections (Dashboard,
+                  Inventory, Staff, etc.)
+                </p>
+                <button
+                  class="btn btn-outline"
+                  onclick="openChangePasscodeModal()"
+                >
+                  Change Passcode
+                </button>
+              </div>
+
+              <!-- Add data backup section -->
+              <div
+                style="
+                  padding: 20px;
+                  background: var(--bg-secondary);
+                  border-radius: 12px;
+                  margin-top: 20px;
+                "
+              >
+                <h3 style="margin-bottom: 12px">📊 Data Backup & Restore</h3>
+                <p
+                  style="
+                    color: var(--text-secondary);
+                    margin-bottom: 12px;
+                    font-size: 14px;
+                  "
+                >
+                  Export all your data as a backup or restore from a previous
+                  backup file.
+                </p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                  <button class="btn btn-primary" onclick="exportDataToJSON()">
+                    📥 Export Backup
+                  </button>
+                  <button
+                    class="btn btn-outline"
+                    onclick="document.getElementById('importFileInput').click()"
+                  >
+                    📤 Import Backup
+                  </button>
+                  <input
+                    type="file"
+                    id="importFileInput"
+                    accept=".json"
+                    style="display: none"
+                    onchange="importDataFromJSON(event)"
+                  />
+                </div>
+                <small
+                  style="
+                    color: var(--text-secondary);
+                    display: block;
+                    margin-top: 12px;
+                  "
+                >
+                  ℹ️ Backups include: Shop settings, Staff, Inventory, Sales
+                  history, Transactions, and Passcode
+                </small>
+              </div>
+
+              <button
+                class="btn btn-primary"
+                onclick="saveSettings()"
+                style="margin-top: 16px"
+              >
+                Save Settings
+              </button>
+
+              <hr style="margin: 24px 0; border-color: var(--border)" />
+
+              <button
+                class="btn btn-danger"
+                onclick="resetToDefault()"
+                style="width: 100%"
+              >
+                ⚠️ Reset System to Default
+              </button>
+            </div>
+          </div>
+
+          <!-- Add Sales History Section -->
+          <div class="section" id="saleshistory">
+            <div class="section-header">
+              <h2 class="section-title">Past Sales & Reports</h2>
+            </div>
+
+            <div
+              style="
+                background: var(--bg-secondary);
+                padding: 16px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                border-left: 4px solid var(--primary);
+              "
+            >
+              <p
+                style="margin: 0; color: var(--text-secondary); font-size: 14px"
+              >
+                📊 View detailed sales reports from previous days. Click on any
+                day to see all transactions, payment methods, and totals.
+              </p>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Total Sales</th>
+                    <th>Transactions</th>
+                    <th>Items Sold</th>
+                    <th>Average Sale</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="salesHistoryTable">
+                  <tr>
+                    <td colspan="6" class="empty-state">
+                      No sales history yet
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="dayReport"></div>
+          </div>
+
+          <!-- Monthly Report Section -->
+          <div class="section" id="monthlyreport">
+            <div class="section-header">
+              <h2 class="section-title">Monthly Product Quantity Report</h2>
+            </div>
+            <div
+              style="background:var(--bg-secondary);padding:16px;border-radius:8px;margin-bottom:20px;border-left:4px solid var(--primary)"
+            >
+              <p style="margin:0;color:var(--text-secondary);font-size:14px">
+                📊 View how many units of each product were sold in a given month. Select a month and year, then click "Generate Report".
+              </p>
+            </div>
+            <div id="monthlyReportContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="addProductModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>Add New Product</span>
+          <button class="modal-close" onclick="closeModal('addProductModal')">
+            ✕
+          </button>
+        </div>
+        <form onsubmit="addProduct(event)">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="productName" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="productCategory">
+                <option value="">Select category</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price (GHS)</label>
+              <input type="number" id="productPrice" step="0.01" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Stock Quantity</label>
+              <input type="number" id="productStock" required />
+            </div>
+            <div class="form-group">
+              <label>Min Stock Level</label>
+              <input type="number" id="productMinStock" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Max Stock Level</label>
+              <input type="number" id="productMaxStock" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="closeModal('addProductModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Add Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="editProductModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>Edit Product</span>
+          <button class="modal-close" onclick="closeModal('editProductModal')">
+            ✕
+          </button>
+        </div>
+        <form onsubmit="saveEditedProduct(event)">
+          <input type="hidden" id="editProductId" />
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="editProductName" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="editProductCategory">
+                <option value="">Select category</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price (GHS)</label>
+              <input type="number" id="editProductPrice" step="0.01" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Current Stock</label>
+              <input type="number" id="editProductCurrentStock" readonly style="background-color: #f0f0f0; cursor: not-allowed;" />
+            </div>
+            <div class="form-group">
+              <label>Add to Stock</label>
+              <input type="number" id="editProductAddStock" min="0" placeholder="Enter quantity to add" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Subtract from Stock</label>
+              <input type="number" id="editProductSubtractStock" min="0" placeholder="Enter quantity to subtract" />
+            </div>
+            <div class="form-group">
+              <label>Min Stock Level</label>
+              <input type="number" id="editProductMinStock" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Max Stock Level (Optional)</label>
+              <input type="number" id="editProductMaxStock" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="closeModal('editProductModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="addStaffModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>Add Staff Member</span>
+          <button class="modal-close" onclick="closeModal('addStaffModal')">
+            ✕
+          </button>
+        </div>
+        <form onsubmit="addStaff(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="staffFullName" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Role</label>
+              <select id="staffRole" required>
+                <option value="">Select role</option>
+                <option value="Pharmacist">Pharmacist</option>
+                <option value="Pharmacy Technician">Pharmacy Technician</option>
+                <option value="Pharmacy Assistant">Pharmacy Assistant</option>
+                <option value="Nurse">Nurse</option>
+                <option value="Head Nurse">Head Nurse</option>
+                <option value="Nursing Assistant">Nursing Assistant</option>
+                <option value="Manager">Manager</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input
+                type="tel"
+                id="staffPhone"
+                placeholder="024XXXXXXX"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Passcode (for POS login)</label>
+            <input type="password" id="staffPasscode" placeholder="Enter passcode" required minlength="4" />
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="closeModal('addStaffModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Add Staff</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="editStaffModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>Edit Staff Member</span>
+          <button class="modal-close" onclick="closeModal('editStaffModal')">✕</button>
+        </div>
+        <form onsubmit="saveStaffEdit(event)">
+          <input type="hidden" id="editStaffId" />
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="editStaffFullName" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Role</label>
+              <select id="editStaffRole" required>
+                <option value="">Select role</option>
+                <option value="Pharmacist">Pharmacist</option>
+                <option value="Pharmacy Technician">Pharmacy Technician</option>
+                <option value="Pharmacy Assistant">Pharmacy Assistant</option>
+                <option value="Nurse">Nurse</option>
+                <option value="Head Nurse">Head Nurse</option>
+                <option value="Nursing Assistant">Nursing Assistant</option>
+                <option value="Manager">Manager</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="editStaffPhone" placeholder="024XXXXXXX" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>New Passcode <span style="font-weight:400;color:var(--text-secondary)">(leave blank to keep current)</span></label>
+            <input type="password" id="editStaffPasscode" placeholder="Enter new passcode" minlength="4" />
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" onclick="closeModal('editStaffModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="staffLoginModal">
+      <div class="modal-content" style="max-width: 420px">
+        <div class="modal-header">
+          <span>POS Login</span>
+          <button
+            class="modal-close"
+            onclick="closeModal('staffLoginModal')"
+          >
+            ✕
+          </button>
+        </div>
+        <div style="padding:20px">
+          <div style="margin-bottom:20px;font-size:13px;color:var(--text-secondary);text-align:center">
+            Select your name and enter your passcode to access the POS.
+          </div>
+
+          <div class="form-group" style="margin-bottom:16px">
+            <label style="font-weight:600;font-size:13px;margin-bottom:6px;display:block">Staff Name</label>
+            <select id="staffLoginSelect" onchange="onStaffSelectChange()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text);font-size:14px;appearance:auto;cursor:pointer">
+              <option value="">— Select Staff —</option>
+            </select>
+          </div>
+
+          <div id="staffLoginPasscodeGroup" style="display:none;margin-bottom:16px">
+            <div class="form-group">
+              <label style="font-weight:600;font-size:13px;margin-bottom:6px;display:block">Passcode</label>
+              <input type="password" id="staffLoginPasscode" placeholder="Enter your passcode" onkeypress="if(event.key==='Enter')loginStaff()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text);font-size:14px;box-sizing:border-box" />
+            </div>
+            <button class="btn btn-primary" onclick="loginStaff()" style="width:100%;margin-top:4px">Login</button>
+          </div>
+
+          <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
+            <div style="font-size:12px;color:var(--text-secondary);text-align:center;margin-bottom:12px">Manager access</div>
+            <div id="staffLoginPasscodeGroup2" style="margin-bottom:0">
+              <div class="form-group" style="margin-bottom:10px">
+                <input type="password" id="staffLoginPasscode2" placeholder="Manager passcode" onkeypress="if(event.key==='Enter')loginAsManager()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text);font-size:14px;box-sizing:border-box" />
+              </div>
+              <button class="btn btn-outline" onclick="loginAsManager()" style="width:100%">Login as Manager</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="receiptModal">
+      <div class="modal-content receipt-modal">
+        <button class="modal-close" onclick="closeModal('receiptModal')">
+          ✕
+        </button>
+        <div id="receiptContent"></div>
+        <div class="receipt-actions">
+          <button class="btn btn-secondary" onclick="printReceipt()">
+            Print
+          </button>
+          <button class="btn btn-primary" onclick="downloadReceipt()">
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Held Carts Modal -->
+    <div class="modal" id="heldCartsModal">
+      <div class="modal-content" style="max-width: 500px">
+        <div class="modal-header">
+          <span>📋 Held Carts</span>
+          <button class="modal-close" onclick="closeModal('heldCartsModal')">✕</button>
+        </div>
+        <div id="heldCartsList">
+          <p style="text-align:center;padding:20px;color:var(--text-secondary)">No held carts.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Passcode Protection Modal -->
+    <div class="modal" id="passcodeModal">
+      <div class="modal-content" style="max-width: 400px">
+        <div class="modal-header">
+          <h2>Enter Passcode</h2>
+          <span class="modal-close" onclick="closeModal('passcodeModal')"
+            >&times;</span
+          >
+        </div>
+        <div class="modal-body">
+          <p
+            style="
+              text-align: center;
+              margin-bottom: 20px;
+              color: var(--text-secondary);
+            "
+          >
+            This section requires authentication. Please enter the passcode.
+          </p>
+          <div class="form-group">
+            <label>Passcode:</label>
+            <input
+              type="password"
+              id="passcodeInput"
+              placeholder="Enter passcode"
+              onkeypress="handlePasscodeKeypress(event)"
+              style="font-size: 18px; letter-spacing: 4px; text-align: center"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('passcodeModal')">
+            Cancel
+          </button>
+          <button class="btn btn-primary" onclick="verifyPasscode()">
+            Verify
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Passcode Modal -->
+    <div class="modal" id="changePasscodeModal">
+      <div class="modal-content" style="max-width: 400px">
+        <div class="modal-header">
+          <h2>Change Passcode</h2>
+          <span class="modal-close" onclick="closeModal('changePasscodeModal')"
+            >&times;</span
+          >
+        </div>
+        <div class="modal-body">
+          <p
+            style="
+              text-align: center;
+              margin-bottom: 20px;
+              color: var(--text-secondary);
+            "
+          >
+            Enter your current passcode and choose a new one.
+          </p>
+          <div class="form-group">
+            <label>Current Passcode:</label>
+            <input
+              type="password"
+              id="currentPasscode"
+              placeholder="Enter current passcode"
+              style="font-size: 16px"
+            />
+          </div>
+          <div class="form-group">
+            <label>New Passcode:</label>
+            <input
+              type="password"
+              id="newPasscodeInput"
+              placeholder="Enter new passcode"
+              style="font-size: 16px"
+            />
+            <small
+              style="
+                color: var(--text-secondary);
+                display: block;
+                margin-top: 4px;
+              "
+            >
+              Must be at least 4 characters
+            </small>
+          </div>
+          <div class="form-group">
+            <label>Confirm Passcode:</label>
+            <input
+              type="password"
+              id="confirmPasscodeInput"
+              placeholder="Confirm passcode"
+              style="font-size: 16px"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-outline"
+            onclick="closeModal('changePasscodeModal')"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary" onclick="saveNewPasscode()">
+            Update Passcode
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cloud Configuration Modal -->
+    <div class="modal" id="cloudConfigModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>☁️ Configure Cloud Storage</span>
+          <button class="modal-close" onclick="closeModal('cloudConfigModal')">
+            ×
+          </button>
+        </div>
+
+        <div
+          style="
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+          "
+        >
+          <strong>Free Setup Instructions:</strong>
+          <ol style="margin: 8px 0 0 20px; line-height: 1.6">
+            <li>
+              Go to
+              <a
+                href="https://supabase.com"
+                target="_blank"
+                style="color: var(--primary)"
+                >supabase.com</a
+              >
+              and create a free account
+            </li>
+            <li>Create a new project (free tier is sufficient)</li>
+            <li>Go to Settings → API</li>
+            <li>Copy the "Project URL" and "anon public" key below</li>
+            <li>
+              Run this SQL in SQL Editor:
+              <pre
+                style="
+                  background: var(--bg-primary);
+                  padding: 8px;
+                  border-radius: 4px;
+                  margin-top: 8px;
+                  overflow-x: auto;
+                  font-size: 11px;
+                "
+              >
+CREATE TABLE shop_data (
+  id BIGSERIAL PRIMARY KEY,
+  storage_id TEXT NOT NULL UNIQUE,
+  data JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);</pre
+              >
+            </li>
+          </ol>
+        </div>
+
+        <form onsubmit="event.preventDefault(); saveCloudConfiguration();">
+          <div class="form-group">
+            <label>Supabase Project URL:</label>
+            <input
+              type="url"
+              id="supabaseUrl"
+              placeholder="https://your-project.supabase.co"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Supabase Anon Key:</label>
+            <input
+              type="text"
+              id="supabaseKey"
+              placeholder="Your anon public key"
+              required
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              Save Configuration
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="closeModal('cloudConfigModal')"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        var link = document.createElement("link");
+        link.rel = "manifest";
+        link.href = "manifest.json";
+        document.head.appendChild(link);
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", function () {
+            navigator.serviceWorker.register("sw.js").catch(function () {});
+          });
+        }
+      }
+    </script>
+    <script src="cloud-sync.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
