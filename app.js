@@ -248,7 +248,7 @@ function showSection(sectionId) {
     monthlyreport: "Monthly Report",
   };
   document.getElementById("pageTitle").textContent = titles[sectionId] || "ShopManager";
-  if (sectionId === "pos") { touchStaffSession(); renderPOS(); updateCart(); }
+  if (sectionId === "pos") { touchStaffSession(); renderPOS(); updateCart(); document.getElementById("barcodeInput")?.focus(); }
   else if (sectionId === "inventory") renderInventory();
   else if (sectionId === "transactions") renderTransactions();
   else if (sectionId === "staff") renderStaffTable();
@@ -494,7 +494,7 @@ function renderInventory() {
 
   if (state.products.length === 0) {
     table.innerHTML =
-      '<tr><td colspan="7" style="text-align: center; padding: 20px;">No products yet. Add one to get started!</td></tr>';
+      '<tr><td colspan="8" style="text-align: center; padding: 20px;">No products yet. Add one to get started!</td></tr>';
     return;
   }
 
@@ -507,6 +507,7 @@ function renderInventory() {
       <td>${p.category || "N/A"}</td>
       <td>GHS${(p.price || 0).toFixed(2)}</td>
       <td><strong>${p.quantity}</strong></td>
+      <td style="font-family:monospace;font-size:13px">${p.barcode || '<span style="color:var(--text-secondary)">—</span>'}</td>
       <td>
         ${
           p.quantity < (p.minStock || state.shop.lowStockThreshold || 10)
@@ -580,9 +581,15 @@ function addProduct(e) {
   const maxStock = document.getElementById("productMaxStock").value
     ? Number.parseInt(document.getElementById("productMaxStock").value)
     : null;
+  const barcode = document.getElementById("productBarcode").value.trim() || null;
 
   if (!name || !price || !quantity) {
     alert("Please fill in all fields");
+    return;
+  }
+
+  if (barcode && state.products.some(p => p.barcode === barcode)) {
+    alert("A product with this barcode already exists");
     return;
   }
 
@@ -593,7 +600,8 @@ function addProduct(e) {
     price,
     quantity,
     minStock,
-    maxStock, // Can be null if not provided
+    maxStock,
+    barcode,
   };
 
   state.products.push(product);
@@ -1006,6 +1014,7 @@ function renderPOS() {
       <div class="product-name">${p.name}</div>
       <div class="product-price">GHS ${(p.price || 0).toFixed(2)}</div>
       <div class="product-stock">Stock: ${p.quantity}</div>
+      ${p.barcode ? `<div class="product-barcode">${p.barcode}</div>` : ""}
     </div>
   `;
       }
@@ -1035,6 +1044,7 @@ function addToCart(productId) {
       id: product.id,
       name: product.name,
       price: product.price,
+      category: product.category,
       quantity: 1,
     });
   }
@@ -1071,7 +1081,12 @@ function updateCart() {
         <div class="cart-item-price">GHS ${(item.price * item.quantity).toFixed(2)}</div>
       </div>
       <div class="cart-item-controls">
-        <button class="btn btn-sm btn-outline" onclick="removeFromCart(${index})">✕</button>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="updateCartQuantity(${index}, -1)" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+          <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="setCartQuantity(${index}, this.value)" onfocus="this.select()" />
+          <button class="qty-btn" onclick="updateCartQuantity(${index}, 1)">+</button>
+        </div>
+        <button class="btn btn-sm btn-outline remove-btn" onclick="removeFromCart(${index})">✕</button>
       </div>
     </div>
   `
@@ -1079,6 +1094,40 @@ function updateCart() {
     .join("");
 
   updateCartTotals();
+}
+
+function updateCartQuantity(index, delta) {
+  const item = state.cart[index];
+  if (!item) return;
+  const product = state.products.find(p => p.id === item.id);
+  const newQty = item.quantity + delta;
+  if (newQty < 1) return;
+  if (product && newQty > product.quantity) {
+    alert("Not enough stock available");
+    return;
+  }
+  item.quantity = newQty;
+  saveState();
+  updateCart();
+}
+
+function setCartQuantity(index, value) {
+  const item = state.cart[index];
+  if (!item) return;
+  const qty = parseInt(value);
+  if (isNaN(qty) || qty < 1) {
+    updateCart();
+    return;
+  }
+  const product = state.products.find(p => p.id === item.id);
+  if (product && qty > product.quantity) {
+    alert("Not enough stock available");
+    updateCart();
+    return;
+  }
+  item.quantity = qty;
+  saveState();
+  updateCart();
 }
 
 function updateCartTotals() {
@@ -1734,7 +1783,9 @@ function filterLowStock() {
   const showLowStockOnly = document.getElementById("lowStockFilter").checked;
   document.querySelectorAll("#inventoryTable tr").forEach((row) => {
     if (showLowStockOnly) {
-      const statusCell = row.querySelector("td:nth-child(6)");
+      // Skip rows with colspan (empty-state message)
+      if (row.querySelector("td[colspan]")) { row.style.display = "none"; return; }
+      const statusCell = row.querySelector("td:nth-child(7)");
       const isLowStock =
         statusCell && statusCell.textContent.includes("Low Stock");
       row.style.display = isLowStock ? "" : "none";
@@ -2289,6 +2340,7 @@ function editProduct(productId) {
   document.getElementById("editProductCurrentStock").value = product.quantity;
   document.getElementById("editProductMinStock").value = product.minStock;
   document.getElementById("editProductMaxStock").value = product.maxStock || "";
+  document.getElementById("editProductBarcode").value = product.barcode || "";
   document.getElementById("editProductAddStock").value = "";
   document.getElementById("editProductSubtractStock").value = "";
   openModal("editProductModal");
@@ -2313,15 +2365,139 @@ function saveEditedProduct(e) {
   product.minStock = parseInt(document.getElementById("editProductMinStock").value) || 0;
   const maxVal = document.getElementById("editProductMaxStock").value;
   product.maxStock = maxVal ? parseInt(maxVal) : undefined;
+  const barcode = document.getElementById("editProductBarcode").value.trim() || null;
+  if (barcode && state.products.some(p => p.barcode === barcode && p.id != id)) {
+    alert("Another product already has this barcode");
+    return;
+  }
+  product.barcode = barcode;
 
   saveState();
   renderInventory();
   closeModal("editProductModal");
 }
 
-// POS Category Filter
+let barcodeBuffer = "";
+let barcodeLastKeyTime = 0;
+
+// Keyboard Shortcuts
+document.addEventListener("keydown", (e) => {
+  const tag = e.target.tagName;
+  const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+
+  // Global shortcuts
+  if (e.key === "Escape") { closeAllModals(); return; }
+  if (e.key === "F1") { e.preventDefault(); document.getElementById("searchInput")?.focus(); return; }
+  if (e.key === "F2") { e.preventDefault(); document.getElementById("barcodeInput")?.focus(); return; }
+
+  // Spacebar to complete sale
+  if (e.key === " " && !isInput && state.cart.length > 0 && document.getElementById("pos")?.classList.contains("active")) {
+    e.preventDefault();
+    completeSale();
+    return;
+  }
+
+  // Enter handling
+  if (e.key === "Enter") {
+    // Scanner buffer detected — process barcode first
+    if (barcodeBuffer.length > 0) {
+      e.preventDefault();
+      processBarcode(barcodeBuffer);
+      barcodeBuffer = "";
+      return;
+    }
+    // Manual Enter in barcodeInput
+    if (e.target.id === "barcodeInput") {
+      e.preventDefault();
+      processBarcode(e.target.value.trim());
+      e.target.value = "";
+      return;
+    }
+    // Print receipt when receipt modal is open
+    if (!isInput && document.getElementById("receiptModal")?.classList.contains("active")) {
+      e.preventDefault();
+      printReceipt();
+      return;
+    }
+    return;
+  }
+
+  // Shift to hold cart
+  if (e.key === "Shift" && !e.repeat && !isInput && document.getElementById("pos")?.classList.contains("active")) {
+    e.preventDefault();
+    holdCart();
+    return;
+  }
+
+  // Buffer rapid alphanumeric keystrokes when NOT in a text input (scanner captures globally)
+  if (e.key.length === 1 && e.key !== " " && !isInput) {
+    const now = Date.now();
+    if (now - barcodeLastKeyTime < 80 || barcodeBuffer.length === 0) {
+      barcodeBuffer += e.key;
+      barcodeLastKeyTime = now;
+      e.preventDefault();
+    } else {
+      barcodeBuffer = "";
+    }
+  }
+});
+
+function processBarcode(code) {
+  if (!code) return;
+
+  // Check which section/modal is active
+  const posSection = document.getElementById("pos");
+  const addModal = document.getElementById("addProductModal");
+  const editModal = document.getElementById("editProductModal");
+
+  if (addModal && addModal.classList.contains("active")) {
+    // In Add Product modal — fill barcode field
+    document.getElementById("productBarcode").value = code;
+    // Optionally auto-focus next field or flash confirmation
+    return;
+  }
+
+  if (editModal && editModal.classList.contains("active")) {
+    // In Edit Product modal — fill barcode field
+    document.getElementById("editProductBarcode").value = code;
+    return;
+  }
+
+  if (posSection && posSection.classList.contains("active")) {
+    // In POS — find product and add to cart
+    const product = state.products.find(p => p.barcode === code);
+    if (!product) {
+      alert(`No product found with barcode: ${code}`);
+      return;
+    }
+    addToCart(product.id);
+    // Show brief flash feedback
+    const input = document.getElementById("barcodeInput");
+    if (input) { input.value = code; setTimeout(() => { input.value = ""; input.focus(); }, 300); }
+    return;
+  }
+
+  // Not in POS or any product modal — silently ignore
+}
+
+function closeAllModals() {
+  document.querySelectorAll(".modal.active").forEach(m => m.classList.remove("active"));
+}
+
+function scanBarcode() {
+  const input = document.getElementById("barcodeInput");
+  if (input) processBarcode(input.value.trim());
+}
+
+// POS Category Filter — preserves search filter
 function filterPOSByCategory() {
+  const searchVal = document.getElementById("searchInput").value.toLowerCase();
   renderPOS();
+  if (searchVal) {
+    document.querySelectorAll(".product-card").forEach((card) => {
+      card.style.display = card.textContent.toLowerCase().includes(searchVal) ? "" : "none";
+    });
+  }
 }
 
 // Passcode update alias

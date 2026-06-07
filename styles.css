@@ -469,6 +469,26 @@ tbody tr:hover {
   color: var(--text-secondary);
 }
 
+.product-barcode {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-family: monospace;
+  margin-top: 4px;
+  opacity: 0.6;
+  letter-spacing: 0.5px;
+}
+
+kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-family: inherit;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
 .cart-panel {
   background: var(--bg-primary);
   border-radius: 12px;
@@ -496,40 +516,95 @@ tbody tr:hover {
 
 .cart-item {
   background: var(--bg-secondary);
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: 8px;
   margin-bottom: 8px;
   font-size: 13px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .cart-item-info {
   flex: 1;
+  min-width: 0;
 }
 
 .cart-item-name {
   font-weight: 600;
-  margin-bottom: 3px;
-}
-
-.cart-item-qty {
-  color: var(--text-secondary);
-  font-size: 12px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cart-item-price {
   font-weight: 700;
   color: var(--primary);
+  font-size: 13px;
 }
 
-.cart-item-remove {
-  background: none;
+.cart-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  background: var(--bg-primary);
   border: none;
-  color: var(--danger);
+  padding: 4px 10px;
   cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+}
+
+.qty-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.qty-input {
+  width: 40px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 4px 0;
   font-size: 14px;
-  padding: 0 8px;
+  font-weight: 600;
+  background: var(--bg-primary);
+  color: var(--text);
+  -moz-appearance: textfield;
+}
+
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.remove-btn {
+  padding: 4px 8px !important;
+  font-size: 14px !important;
+  line-height: 1;
 }
 
 .cart-footer {

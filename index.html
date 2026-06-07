@@ -122,13 +122,24 @@
           <div class="section active" id="pos">
             <div class="pos-container">
               <div>
-                <div class="search-box">
+                <div class="search-box" style="display:flex;gap:8px">
                   <input
                     type="text"
                     placeholder="Search products..."
                     id="searchInput"
                     onkeyup="filterProducts()"
+                    style="flex:1"
                   />
+                  <input
+                    type="text"
+                    placeholder="🔍 Scan barcode..."
+                    id="barcodeInput"
+                    style="max-width:200px;font-family:monospace"
+                    title="F2: Focus here | Scanner: auto-detect"
+                  />
+                </div>
+                <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px">
+                  <kbd>F1</kbd> Search &nbsp; <kbd>F2</kbd> Barcode &nbsp; <kbd>Space</kbd> Sale &nbsp; <kbd>Shift</kbd> Hold &nbsp; <kbd>Enter</kbd> Print Receipt &nbsp; <kbd>Esc</kbd> Close
                 </div>
                 <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
                   <label style="font-weight: 500; font-size: 14px;">Filter by Category:</label>
@@ -405,13 +416,14 @@
                     <th>Category</th>
                     <th>Price</th>
                     <th>Stock</th>
+                    <th>Barcode</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="inventoryTable">
                   <tr>
-                    <td colspan="7" class="empty-state">No products yet</td>
+                    <td colspan="8" class="empty-state">No products yet</td>
                   </tr>
                 </tbody>
               </table>
@@ -779,6 +791,10 @@
               <label>Max Stock Level</label>
               <input type="number" id="productMaxStock" />
             </div>
+            <div class="form-group">
+              <label>Barcode</label>
+              <input type="text" id="productBarcode" placeholder="Scan or enter barcode" />
+            </div>
           </div>
           <div class="form-actions">
             <button
@@ -842,8 +858,12 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Max Stock Level (Optional)</label>
+              <label>Max Stock Level</label>
               <input type="number" id="editProductMaxStock" />
+            </div>
+            <div class="form-group">
+              <label>Barcode</label>
+              <input type="text" id="editProductBarcode" placeholder="Scan or enter barcode" />
             </div>
           </div>
           <div class="form-actions">
