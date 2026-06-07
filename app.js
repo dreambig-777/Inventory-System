@@ -709,8 +709,7 @@ function loginStaff() {
   select.value = "";
   document.getElementById("staffLoginPasscodeGroup").style.display = "none";
   closeModal("staffLoginModal");
-  renderPOS();
-  updateCart();
+  showSection("pos");
 }
 
 function onStaffSelectChange() {
@@ -736,8 +735,7 @@ function loginAsManager() {
   updateStaffUI();
   document.getElementById("staffLoginPasscode2").value = "";
   closeModal("staffLoginModal");
-  renderPOS();
-  updateCart();
+  showSection("pos");
 }
 
 function logoutStaff() {
