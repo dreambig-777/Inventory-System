@@ -792,22 +792,27 @@ kbd {
 
   .pos-container {
     grid-template-columns: 1fr;
-    height: auto;
-    overflow: visible;
+    grid-template-rows: 1fr auto;
+    height: 100%;
+    overflow: hidden;
   }
 
   .pos-container > div:first-child {
-    overflow: visible;
+    overflow: hidden;
     min-height: 0;
   }
 
   .cart-panel {
-    max-height: none;
-    overflow: visible;
+    max-height: 280px;
+    overflow: hidden;
   }
 
   .cart-items {
-    max-height: 200px;
+    max-height: 100px;
+  }
+
+  .cart-footer {
+    padding: 12px;
   }
 
   .form-row,
@@ -946,6 +951,10 @@ kbd {
 
   .content-area {
     padding: 12px;
+  }
+
+  .cart-panel {
+    max-height: 220px;
   }
 
   .products-grid {
