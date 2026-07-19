@@ -802,7 +802,12 @@ kbd {
   }
 
   .cart-panel {
-    max-height: 300px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .cart-items {
+    max-height: 200px;
   }
 
   .form-row,
