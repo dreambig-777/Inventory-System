@@ -20,7 +20,7 @@
       rel="apple-touch-icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231e40af' width='192' height='192' rx='45'/><text x='96' y='120' font-size='80' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>💼</text></svg>"
     />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <div class="container">
@@ -648,6 +648,13 @@
                 <div class="settings-card-body">
                   <p class="settings-description">Manager passcode for accessing Dashboard, Inventory, Staff, and other protected sections.</p>
                   <button class="btn btn-outline" onclick="openChangePasscodeModal()">Change Passcode</button>
+                  <hr style="margin:16px 0;border-color:var(--border)" />
+                  <p class="settings-description"><strong>Access Key</strong> — Set a key to lock the system behind a URL parameter. Only URLs with <code>?key=YOURKEY</code> can access the system. Change the key to revoke old links.</p>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input type="text" id="accessKeyInput" placeholder="Leave empty for no restriction" style="flex:1" />
+                    <button class="btn btn-primary" onclick="saveAccessKey()">Save</button>
+                  </div>
+                  <p style="font-size:12px;margin:8px 0 0 0;color:var(--text-secondary)" id="accessKeyHelp"></p>
                 </div>
               </div>
 
@@ -1270,7 +1277,13 @@ CREATE TABLE shop_data (
         }
       }
     </script>
-    <script src="cloud-sync.js?v=2"></script>
-    <script src="app.js?v=2"></script>
+    <div id="lockScreen" style="display:none;position:fixed;inset:0;background:#0f172a;z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#94a3b8;font-family:sans-serif;padding:20px;text-align:center">
+      <div style="font-size:48px">🔒</div>
+      <h2 style="color:#fff;margin:0">System Locked</h2>
+      <p style="max-width:400px;line-height:1.5">This system is protected. Access requires a valid URL key.</p>
+      <p style="font-size:13px">Contact the shop manager for a valid access link.</p>
+    </div>
+    <script src="cloud-sync.js?v=3"></script>
+    <script src="app.js?v=3"></script>
   </body>
 </html>

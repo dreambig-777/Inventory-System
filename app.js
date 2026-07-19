@@ -26,6 +26,7 @@ const state = {
   dailyHistory: [], // NEW: Stores daily summaries
   currentDate: new Date().toDateString(), // NEW: Tracks current date
   passcode: "1234", // Default passcode
+  accessKey: "",    // URL query key for demo access control; empty = no restriction
   isAuthenticated: false,
   heldCarts: [],
 };
@@ -142,6 +143,8 @@ const STAFF_ROLES_BY_SHOP_TYPE = {
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
+  // Check access key before anything else
+  if (!checkAccessKey()) return;
   // Auto-prune transactions older than 90 days silently on startup
   const pruned = pruneOldTransactions(90);
   if (pruned && pruned.length > 0) saveState();
@@ -199,6 +202,42 @@ function saveState() {
 
 // UI Functions
 let pendingSectionId = null;
+
+// Access Key — lock system behind a URL query parameter
+function getAccessKeyFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("key") || "";
+}
+
+function checkAccessKey() {
+  const lockScreen = document.getElementById("lockScreen");
+  if (!lockScreen) return true;
+  const key = state.accessKey || "";
+  if (!key) { lockScreen.style.display = "none"; return true; }
+  if (getAccessKeyFromURL() !== key) {
+    lockScreen.style.display = "flex";
+    document.querySelector(".container").style.display = "none";
+    return false;
+  }
+  lockScreen.style.display = "none";
+  document.querySelector(".container").style.display = "";
+  return true;
+}
+
+function saveAccessKey() {
+  const input = document.getElementById("accessKeyInput");
+  const key = input.value.trim();
+  state.accessKey = key;
+  saveState();
+  const help = document.getElementById("accessKeyHelp");
+  if (key) {
+    const url = window.location.origin + window.location.pathname + "?key=" + key;
+    help.innerHTML = '✓ Saved. Share this link: <a href="' + url + '" target="_blank" style="color:var(--primary)">' + url + '</a>';
+  } else {
+    help.textContent = "✓ Access key removed — no restriction.";
+  }
+  checkAccessKey();
+}
 
 function showSection(sectionId) {
   const protectedSections = [
@@ -1323,6 +1362,11 @@ function loadSettings() {
   document.getElementById("discountReason").value = disc.reason;
   updateDiscountValueLabel();
   updateShopNameDisplay();
+  // Load access key
+  const keyInput = document.getElementById("accessKeyInput");
+  if (keyInput) {
+    keyInput.value = state.accessKey || "";
+  }
 }
 
 function saveSettings() {
@@ -1978,6 +2022,7 @@ function resetToDefault() {
     dailyHistory: [],
     currentDate: new Date().toDateString(),
     passcode: "1234",
+    accessKey: "",
     isAuthenticated: false,
     heldCarts: [],
   });
