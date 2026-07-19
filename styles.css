@@ -793,6 +793,12 @@ kbd {
   .pos-container {
     grid-template-columns: 1fr;
     height: auto;
+    overflow: visible;
+  }
+
+  .pos-container > div:first-child {
+    overflow: visible;
+    min-height: 0;
   }
 
   .cart-panel {
