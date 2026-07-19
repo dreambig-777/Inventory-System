@@ -1207,3 +1207,26 @@ kbd {
     flex-direction: column;
   }
 }
+
+/* Landscape mode on small screens — products + cart side by side */
+@media (orientation: landscape) and (max-height: 600px) {
+  .pos-container {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 12px;
+  }
+
+  .pos-container > div:first-child {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .cart-panel {
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .cart-items {
+    max-height: 120px;
+  }
+}
