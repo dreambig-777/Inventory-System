@@ -1209,7 +1209,7 @@ kbd {
 }
 
 /* Landscape mode on small screens — products + cart side by side */
-@media (orientation: landscape) and (max-height: 600px) {
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 1024px) {
   .pos-container {
     display: grid;
     grid-template-columns: 1fr 280px;
