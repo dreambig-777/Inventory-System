@@ -959,7 +959,7 @@ kbd {
   }
 
   .cart-items {
-    max-height: 60px;
+    max-height: 100px;
   }
 
   .cart-footer {
