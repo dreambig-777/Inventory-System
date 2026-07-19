@@ -803,11 +803,11 @@ kbd {
   }
 
   .cart-panel {
-    max-height: 280px;
     overflow: hidden;
   }
 
   .cart-items {
+    flex: 1;
     max-height: 100px;
   }
 
@@ -953,8 +953,12 @@ kbd {
     padding: 12px;
   }
 
-  .cart-panel {
-    max-height: 220px;
+  .cart-items {
+    max-height: 60px;
+  }
+
+  .cart-footer {
+    padding: 8px;
   }
 
   .products-grid {
