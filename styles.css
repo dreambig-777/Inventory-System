@@ -794,25 +794,27 @@ kbd {
   }
 
   .pos-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
+    display: flex;
+    flex-direction: column;
     flex: 1;
     overflow: hidden;
     min-height: 0;
   }
 
   .pos-container > div:first-child {
+    flex: 1;
     overflow: hidden;
     min-height: 0;
   }
 
   .cart-panel {
-    overflow: hidden;
+    flex: none;
+    max-height: 50vh;
+    overflow-y: auto;
   }
 
   .cart-items {
     flex: 1;
-    max-height: 100px;
   }
 
   .cart-footer {
