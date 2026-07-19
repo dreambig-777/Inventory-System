@@ -788,13 +788,17 @@ kbd {
 
   .content-area {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   .pos-container {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
-    height: 100%;
+    flex: 1;
     overflow: hidden;
+    min-height: 0;
   }
 
   .pos-container > div:first-child {
@@ -837,8 +841,7 @@ kbd {
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    height: auto;
-    min-height: 100vh;
+    height: 100vh;
   }
 
   .sidebar {
