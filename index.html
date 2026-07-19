@@ -20,7 +20,7 @@
       rel="apple-touch-icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231e40af' width='192' height='192' rx='45'/><text x='96' y='120' font-size='80' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>💼</text></svg>"
     />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=6" />
   </head>
   <body>
     <div class="container">
@@ -137,9 +137,6 @@
                     style="max-width:200px;font-family:monospace"
                     title="F2: Focus here | Scanner: auto-detect"
                   />
-                </div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px">
-                  <kbd>F1</kbd> Search &nbsp; <kbd>F2</kbd> Barcode &nbsp; <kbd>Space</kbd> Sale &nbsp; <kbd>Shift</kbd> Hold &nbsp; <kbd>Enter</kbd> Print Receipt &nbsp; <kbd>Esc</kbd> Close
                 </div>
                 <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
                   <label style="font-weight: 500; font-size: 14px;">Filter by Category:</label>
@@ -679,6 +676,26 @@
                   <div class="settings-hint" style="margin-top:12px">
                     💾 Backups include shop settings, staff, inventory, sales history, transactions, and passcode.
                     <br>🗂️ Archive moves transactions older than 90 days to a downloadable file to free up space.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Keyboard Shortcuts Card -->
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div class="settings-card-title">
+                    <span class="settings-icon">⌨️</span>
+                    <span>Keyboard Shortcuts</span>
+                  </div>
+                </div>
+                <div class="settings-card-body">
+                  <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:13px">
+                    <span><kbd>F1</kbd> Search</span>
+                    <span><kbd>F2</kbd> Barcode</span>
+                    <span><kbd>Space</kbd> Complete Sale</span>
+                    <span><kbd>Shift</kbd> Hold Cart</span>
+                    <span><kbd>Enter</kbd> Print Receipt</span>
+                    <span><kbd>Esc</kbd> Close</span>
                   </div>
                 </div>
               </div>
@@ -1283,7 +1300,7 @@ CREATE TABLE shop_data (
       <p style="max-width:400px;line-height:1.5">This system is protected. Access requires a valid URL key.</p>
       <p style="font-size:13px">Contact the shop manager for a valid access link.</p>
     </div>
-    <script src="cloud-sync.js?v=3"></script>
-    <script src="app.js?v=3"></script>
+    <script src="cloud-sync.js?v=4"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>
