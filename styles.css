@@ -788,37 +788,6 @@ kbd {
 
   .content-area {
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  .pos-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-    min-height: 0;
-  }
-
-  .pos-container > div:first-child {
-    flex: 1;
-    overflow: hidden;
-    min-height: 0;
-  }
-
-  .cart-panel {
-    flex: none;
-    max-height: 50vh;
-    overflow-y: auto;
-  }
-
-  .cart-items {
-    flex: 1;
-  }
-
-  .cart-footer {
-    padding: 12px;
   }
 
   .form-row,
@@ -912,10 +881,41 @@ kbd {
 
   .content-area {
     padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   .header-title {
     font-size: 18px;
+  }
+
+  .pos-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .pos-container > div:first-child {
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .cart-panel {
+    flex: none;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  .cart-items {
+    flex: 1;
+  }
+
+  .cart-footer {
+    padding: 12px;
   }
 }
 
@@ -1223,7 +1223,7 @@ kbd {
 
   .cart-panel {
     max-height: none;
-    overflow: hidden;
+    overflow-y: auto;
   }
 
   .cart-items {
